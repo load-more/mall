@@ -25,6 +25,7 @@ export default {
   methods: {
     tabcontrolClick(index) {
       this.currentIndex = index
+      this.$emit('tabClick', index)   // 子传父，自定义事件
     }
   }
 }
@@ -39,6 +40,7 @@ export default {
 
     position: sticky;
     top: 44px;
+    z-index: 9;
   }
   .tab-control-active span {
     border-bottom: red solid 2px;

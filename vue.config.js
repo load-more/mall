@@ -9,5 +9,8 @@ module.exports = {
         'views': '@/views',
       }
     }
-  }
+  },
+  devServer: {
+    host: "192.168.0.16",
+    port: 8081
 }

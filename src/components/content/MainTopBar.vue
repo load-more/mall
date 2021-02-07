@@ -1,6 +1,8 @@
 <template>
   <div>
-    <router-view></router-view>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
     <topbar>
       <topbar-item path='/home'>
         <img slot='icon' src="~assets/img/home.svg" alt="">

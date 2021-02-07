@@ -1,10 +1,14 @@
 <template>
   <div class="homeView">
     <nav-bar class="nav-bar"><div slot="center">购物街</div></nav-bar>
-    <scroll ref="scroll" :probe-type="3" :pull-up-load="true" :clickType="true" @scroll="scroll" @loadMore="loadMore">
-      <main-carousel :banner-list="bannerList"></main-carousel>
-      <recommend :recommendData="recommendData"></recommend>
-      <tab-control :list="tabList" @tabClick="tabClick"></tab-control>
+    <tab-control :list="tabList" @tabClick="tabClick" ref="tabControl" v-show="isShowTabControl" 
+    :tab-index="tabIndex" />
+    <scroll ref="scroll" :probe-type="3" :pull-up-load="true" :clickType="true" @scroll="scroll"
+     @loadMore="loadMore"
+     >
+      <main-carousel :banner-list="bannerList" @isLoadImage="isLoadImage" />
+      <recommend :recommendData="recommendData" />
+      <tab-control :list="tabList" @tabClick="tabClick" ref="tabControl" :tab-index="tabIndex" />
       <goods-list :goods="showGoods" />
     </scroll>
     <back-top @click.native="backtopClick" v-show="isShowBackTop" />
@@ -23,6 +27,7 @@ import recommend from "views/home/recommend/recommend";
 import GoodsList from "components/content/GoodsList/GoodsList";
 
 import { getHomeMultiData, getHomeGoods } from "network/home";
+import {debounce} from "common/utils"
 
 export default {
   name: "home",
@@ -47,7 +52,10 @@ export default {
       tabList: ["流行", "新款", "精选"],
       tabListEn: ['pop', 'new', 'sell'],
       tabIndex: 0,
-      isShowBackTop: false
+      isShowBackTop: false,
+      tabOffsetTop: 0,
+      isShowTabControl: false,
+      saveY: 0
     };
   },
   computed: {
@@ -60,6 +68,20 @@ export default {
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
+
+  },
+  mounted () {
+    let refresh = debounce(this.$refs.scroll.refresh, 500)
+    this.$bus.$on("itemImageLoad", () => {    // 注意放在mounted里，保证能获取到元素
+      refresh("refresh...")
+    })
+  },
+  activated () {
+    this.$refs.scroll.scrollTo(0, this.saveY, 0)
+    this.$refs.scroll.refresh()
+  },
+  deactivated () {
+    this.saveY = this.$refs.scroll.getPositionY()
   },
 
   methods: {
@@ -67,7 +89,6 @@ export default {
       getHomeMultiData().then((res) => {
         this.bannerList = res.data.banner.list;
         this.recommendData = res.data.recommend.list;
-        // console.log(this.recommendData);
       });
     },
     getHomeGoods(type) {
@@ -77,24 +98,26 @@ export default {
         this.goods[type].page = page;
         this.goods[type].list.push(...res.data.list); //解析数组并push
 
-        this.$refs.scroll.scroll.finishPullUp() //结束加载更多
+        this.$refs.scroll.finishPullUp() //结束加载更多,下一次继续调用
       });
     },
 
     tabClick(index) {
-      // console.log(index);
       this.tabIndex = index;
     },
     backtopClick () {
-      this.$refs.scroll.scroll.scrollTo(0, 0, 500)  // (x, y, backTime)
+      this.$refs.scroll.scrollTo(0, 0)
     },
     scroll (position) {
       this.isShowBackTop = (-position.y) > 500
+      this.isShowTabControl = (-position.y) > (this.tabOffsetTop)
     },
     loadMore () {
       this.getHomeGoods(this.tabListEn[this.tabIndex])
-      this.$refs.scroll.scroll.refresh()  //刷新，避免卡住
+    },
 
+    isLoadImage () {
+      this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
     }
     
     
@@ -111,4 +134,5 @@ export default {
   position: relative;
   height: 100vh;
 }
+
 </style>

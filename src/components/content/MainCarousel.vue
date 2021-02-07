@@ -3,7 +3,7 @@
     <carousel>
       <carousel-item v-for="(item, index) in bannerList" :key="index" v-show="index==currentIndex">
         <a :href="item.link" slot="banner" @mouseover="mouseHover" @mouseleave="mouseLeave">
-          <img :src="item.image" alt="" />
+          <img :src="item.image" alt="" @load="carouselImageLoad" />
         </a>
       </carousel-item>
       <carousel-dot>
@@ -40,7 +40,8 @@ export default {
   data(){
     return {
       currentIndex: 0,
-      timer: null
+      timer: null,
+      isLoadImage: false
     }
   },
   methods: {
@@ -67,6 +68,12 @@ export default {
     },
     next(){
       this.currentIndex = (this.currentIndex + 1) % this.bannerList.length
+    },
+    carouselImageLoad () {
+      if (!this.isLoadImage) {
+        this.$emit("isLoadImage")
+        this.isLoadImage = true
+      }
     }
   },
   created() {

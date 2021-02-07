@@ -141,9 +141,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .wrapper {
-    background-color: red;
+    background-color: red; 
     height: 200px;
   }
 </style>

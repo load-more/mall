@@ -78,6 +78,80 @@
   - 在使用动态属性的时候，通常属性名不能出现大写，要用-代替，如： :background-color="color"
   - 但是用自定义事件时，可以使用大写，如： @btnClick="btnClick"
 - 页面卡住无法滚动问题：
-  - 这是因为图片是异步加载的，当要滚动时，better-scroll会先计算wrapper的高度，此时如果图片还没全部加载完成，那么wrapper的高度就比实际的更小，页面可滚动的范围也更小，所以当图片加载完成时，wrapper高度增加，就会导致在某个位置卡住，无法往下滚动
-  - 解决办法：在滚动之前，重新计算wrapper的高度，通过scroll.refresh()刷新
+  - 这是因为图片是异步加载的，当要滚动时，better-scroll会先计算content的高度，此时如果图片还没全部加载完成，那么content的高度就比实际的更小，页面可滚动的范围也更小，所以当图片加载完成时，content高度增加，就会导致在某个位置卡住，无法往下滚动
+  - 解决办法：在滚动之前，重新计算content@的高度，通过scroll.refresh()刷新
+
+> 解决首页中better-scroll可滚动区域的问题
+- better-scroll在决定有多少区域可以滚动时，是根据scrollerHeight属性决定的
+- scrollerHeight属性是根据better-scroll中content的子组件的高度决定的，但是在首页里，由于图片是异步加载的，刚开始计算scrollerHeight时，没有将图片高度计算在内，到后来所有图片加载完成后，scrollerHeight有了新的高度，但属性并没有进行更新，所以滚动出现了问题
+- 解决方法：
+  - 监听每一张图片是否加载完成，只要有一张图片加载完成，就执行一次refresh()
+  - 如何监听图片是否加载完成：
+    - 1.原生js：img.onload = function(){}
+    - 2.Vue中监听：img标签内加入@load=""方法
+  - 在GoodsListItem中添加@load方法，如何将状态传给Scroll？
+    - 1.自定义事件，但是要一层层转移，比较麻烦
+    - 2.使用Vuex，创建公共状态
+    - 3.创建bus总线:
+      - 在main.js中给Vue添加一个原型$bus，值为新的Vue对象，这样Vue的实例就有$bus了，而且可以调用$emit和$on
+      - 在GoodsListItem中添加@load方法，触发回调函数，添加事件监听
+      - 在home中获取事件监听，并执行响应函数，即refresh
+
+> 问题
+- 注意给scroll封装一些常用的函数，避免其它组件调用scroll对象时还要频繁获取scroll
+- 注意获取$refs时，要放在mounted中，只有当组件挂载后，才能获取到元素
+- 在调用scroll中的一些方法时，通常在前面加上 this.scroll && ，这样就能保证在获取到scroll后才调用方法，避免没有scroll却仍然调用它的方法而导致报错
+
+> 防抖（debounce）和节流（throttle）
+- 防抖
+  - 当数据请求过于频繁时，需要加入防抖操作，以减轻服务的压力
+```javascript
+mounted () {
+  let refresh = this.debounce(this.$refs.scroll.refresh, 20)
+  this.$bus.$on("itemImageLoad", () => { 
+    refresh("refresh...")
+  })
+},
+
+methods: {
+  debounce (func, delay) {
+    let timer = null        // 1.创建一个空的定时器
+
+    return (...args) => {
+      if (timer) {          // 2.如果存在定时器则销毁，避免创建多个定时器
+        clearTimeout(timer)
+      }
+      timer = setTimeout(() => {  // 3.创建一个新的定时器
+        func.apply(this, args)
+        console.log(...args);
+      }, delay)
+    }
+  },
+```
+  - 实现过程：
+    - 1.调用refresh()，创建一个timer，在delay时间后，发送refresh请求
+    - 2.如果在发送之前，又加入调用一次refresh()，则会销毁之前的timer，重新创建一个timer，在delay时间后，发送refresh请求
+    - 3.如此反复，直到发送之前，没有调用refresh()
+
+  - setTimeout的执行顺序：
+```javascript
+  cosole.log("fff")
+
+  setTimeout({
+    console.log("ddd")
+  })
+
+  console.log("aaa")
+  // 执行结果：fff -> aaa -> ddd
+  // 即使setTimeout函数没有设置延迟时间，但延时程序仍然会在最后执行
+```
+
+
+> tab-control的吸顶效果
+
+
+> 让Home保持原来的状态
+  - 使用keep-alive
+
+
 

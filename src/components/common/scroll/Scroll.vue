@@ -42,12 +42,25 @@ export default {
       this.$emit('scroll', position)
     })
 
+
     this.scroll.on('pullingUp', () => {
-      this.scroll.refresh()
       this.$emit('loadMore')
-      this.scroll.refresh()
     })
-  }
+  },
+  methods: {  //封装函数
+    scrollTo (x, y, time=500) {
+      this.scroll && this.scroll.scrollTo(x, y, time) //只有当scroll存在时，才执行后面的函数，防止报错
+    },
+    finishPullUp () {
+      this.scroll && this.scroll.finishPullUp()
+    },
+    refresh () {
+      this.scroll && this.scroll.refresh()
+    },
+    getPositionY () {
+      return this.scroll ? this.scroll.y : 0
+    }
+  },
 }
 </script>
 

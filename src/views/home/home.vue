@@ -1,56 +1,13 @@
 <template>
   <div class="homeView">
     <nav-bar class="nav-bar"><div slot="center">购物街</div></nav-bar>
-    <main-carousel :banner-list="bannerList"></main-carousel>
-    <recommend :recommendData="recommendData"></recommend>
-    <tab-control :list="tabList" @tabClick="tabClick"></tab-control>
-    <goods-list :goods="showGoods" />
-    <ul>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-    </ul>
+    <scroll ref="scroll" :probe-type="3" :pull-up-load="true" :clickType="true" @scroll="scroll" @loadMore="loadMore">
+      <main-carousel :banner-list="bannerList"></main-carousel>
+      <recommend :recommendData="recommendData"></recommend>
+      <tab-control :list="tabList" @tabClick="tabClick"></tab-control>
+      <goods-list :goods="showGoods" />
+    </scroll>
+    <back-top @click.native="backtopClick" v-show="isShowBackTop" />
   </div>
 </template>
 
@@ -58,6 +15,8 @@
 import navBar from "components/common/navbar/navbar";
 import MainCarousel from "components/content/MainCarousel";
 import TabControl from "components/common/tabcontrol/TabControl";
+import Scroll from "components/common/scroll/Scroll"
+import BackTop from "components/common/backtop/BackTop"
 
 import recommend from "views/home/recommend/recommend";
 
@@ -73,6 +32,8 @@ export default {
     recommend,
     TabControl,
     GoodsList,
+    Scroll,
+    BackTop
   },
   data() {
     return {
@@ -86,6 +47,7 @@ export default {
       tabList: ["流行", "新款", "精选"],
       tabListEn: ['pop', 'new', 'sell'],
       tabIndex: 0,
+      isShowBackTop: false
     };
   },
   computed: {
@@ -114,6 +76,8 @@ export default {
         // console.log(res);
         this.goods[type].page = page;
         this.goods[type].list.push(...res.data.list); //解析数组并push
+
+        this.$refs.scroll.scroll.finishPullUp() //结束加载更多
       });
     },
 
@@ -121,6 +85,19 @@ export default {
       // console.log(index);
       this.tabIndex = index;
     },
+    backtopClick () {
+      this.$refs.scroll.scroll.scrollTo(0, 0, 500)  // (x, y, backTime)
+    },
+    scroll (position) {
+      this.isShowBackTop = (-position.y) > 500
+    },
+    loadMore () {
+      this.getHomeGoods(this.tabListEn[this.tabIndex])
+      this.$refs.scroll.scroll.refresh()  //刷新，避免卡住
+
+    }
+    
+    
   },
 };
 </script>
@@ -131,6 +108,7 @@ export default {
   color: white;
 }
 .homeView {
-  margin-top: 44px;
+  position: relative;
+  height: 100vh;
 }
 </style>

@@ -125,7 +125,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .nav-bar {
   background-color: rgb(209, 81, 166);
   color: white;

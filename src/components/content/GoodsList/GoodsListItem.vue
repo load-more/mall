@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-list-item">
+  <div class="goods-list-item"  @click="goodsListItemClick">
     <img :src="item.show.img" alt="" @load="imgLoad">
     <div class="goods-list-info">
       <p>{{item.title}}</p>
@@ -23,9 +23,11 @@ export default {
   methods: {
     imgLoad () {
       this.$bus.$emit("itemImageLoad")
+    },
+    goodsListItemClick () {
+      this.$router.push('/detail/' + this.item.iid)
     }
-  },
-
+  }
 }
 </script>
 
@@ -38,8 +40,6 @@ export default {
   .goods-list-item img {
     width: 100%;
     border-radius: 5px;
-    /* position: absolute;
-    top: 0; */
   }
   .goods-list-info {
     position: absolute;

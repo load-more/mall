@@ -154,4 +154,7 @@ methods: {
   - 使用keep-alive
 
 
+> 详情页
+
+
 

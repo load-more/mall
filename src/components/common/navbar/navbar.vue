@@ -19,14 +19,19 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .nav-bar{
     display: flex;
     height: 44px;
     line-height: 44px;
     text-align: center;
+    justify-content: center;
+    box-shadow: black 0 0 3px;
   }
-  .left .right {
+  .left {
+    width: 60px;
+  }
+  .right {
     width: 60px;
   }
   .center {

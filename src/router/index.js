@@ -7,6 +7,7 @@ const home = () => import('views/home/home.vue')
 const category = () => import('views/category/category.vue')
 const cart = () => import('views/cart/cart.vue')
 const profile = () => import('views/profile/profile.vue')
+const detail = () => import("views/detail/detail.vue")
 
 export default new Router({
   routes: [
@@ -29,6 +30,10 @@ export default new Router({
     {
       path: '/category',
       component: category
+    },
+    {
+      path: "/detail/:iid",
+      component: detail
     }
   ],
   mode: 'history'

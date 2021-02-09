@@ -1,9 +1,9 @@
 <template>
   <div>
-    <keep-alive>
+    <keep-alive exclude="detail">
       <router-view></router-view>
     </keep-alive>
-    <topbar>
+    <topbar v-show="this.$route.meta.show">
       <topbar-item path='/home'>
         <img slot='icon' src="~assets/img/home.svg" alt="">
         <img slot='icon_activated' src="~assets/img/home_activated.svg" alt="">

@@ -155,6 +155,28 @@ methods: {
 
 
 > 详情页
+#### 1. 添加轮播图：
+  - 注意安装版本，否则无法显示pagination
+  - 当给轮播图添加图片时，在props的images添加，但无法自动播放也没有显示pagination，解决办法是添加API：Observer: true，修改swiper自己或子元素时，自动初始化swiper
+  - 无法循环播放，解决办法：给v-for的父元素加 v-if="images.length>0"
 
+#### 2.详情页不保留记录
+  - 因为所有路由都设置了keep-alive，所以组件都会保留历史记录，这就导致详情页不会发生刷新
+  - 解决办法：设置exclude="detail"，注意，必须给组件设置name属性，且属性名要对应
 
+#### 3.保存数据
+  - 因为从后端请求得到的数据十分复杂，所以要对数据进行抽离
+  - 可以使用类构造的方法，保存并提取数据
+  ```javascript
+    export class Data {
+      constructor(info) {
+        this.xxx = info.xxx
+        ...
+      }
+    }
+    const xxx = new Data(xxx)
+  ```
+
+#### 4.详情页不显示tabbar
+  - 给路由添加meta，里面添加一个属性show，给detail设置false，然后在tabbar下添加v-show="this.$route.meta.show"，即可以实现跳转到detail时，不显示tabbar
 

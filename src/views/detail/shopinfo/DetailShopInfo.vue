@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="shop">
-      <img :src="shopInfo.logo" alt="">
+      <img :src="shopInfo.logo" alt="" @load="imgLoad">
       {{shopInfo.name}}
     </div>
     <div class="detail">
@@ -37,6 +37,11 @@ export default {
       default() {
         return {}
       }
+    }
+  },
+  methods: {
+    imgLoad() {
+      this.$emit("imgLoad")
     }
   }
 }

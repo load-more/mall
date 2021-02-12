@@ -72,8 +72,8 @@ export default {
   },
   mounted () {
     let refresh = debounce(this.$refs.scroll.refresh, 500)
-    this.$bus.$on("itemImageLoad", () => {    // 注意放在mounted里，保证能获取到元素
-      refresh("refresh...")
+    this.$bus.$on("homeItemImageLoad", () => {    // 注意放在mounted里，保证能获取到元素
+      refresh("Home refresh...")
     })
   },
   activated () {

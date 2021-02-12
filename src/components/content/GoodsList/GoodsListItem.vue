@@ -1,6 +1,6 @@
 <template>
   <div class="goods-list-item"  @click="goodsListItemClick">
-    <img :src="item.show.img" alt="" @load="imgLoad">
+    <img :src="showImg" alt="" @load="imgLoad">
     <div class="goods-list-info">
       <p>{{item.title}}</p>
       <span class="price">{{item.price}}￥,</span>
@@ -21,11 +21,24 @@ export default {
     }
   },
   methods: {
-    imgLoad () {
-      this.$bus.$emit("itemImageLoad")
+    imgLoad () {  // 判断是详情页刷新还是主页刷新
+        // console.log(this.$route.path);
+      if (this.$route.path.indexOf("home")) {          // 主页刷新
+        console.log("home");
+        this.$bus.$emit("homeItemImageLoad")
+      } 
+      if (this.$route.path.indexOf("detail")) { // 详情页刷新
+        console.log("detail");
+        this.$bus.$emit("detailItemImageLoad")
+      }
     },
     goodsListItemClick () {
       this.$router.push('/detail/' + this.item.iid)
+    }
+  },
+  computed: {
+    showImg() {
+      return this.item.image || this.item.show.img
     }
   }
 }

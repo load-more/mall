@@ -180,3 +180,25 @@ methods: {
 #### 4.详情页不显示tabbar
   - 给路由添加meta，里面添加一个属性show，给detail设置false，然后在tabbar下添加v-show="this.$route.meta.show"，即可以实现跳转到detail时，不显示tabbar
 
+#### 5.添加评论区域
+  - 出现“Error in render: "TypeError: Cannot read property '0' of undefined"”渲染错误问题
+  - 原因：读取对象中的某个对象的属性值时，这个对象不存在，说通俗点就是三层表达式a.b.c，在对象a中没有对象b，那么读取对象a.b.c中的值，自然会报错。如果是两层表达式a.b则不会报错，返回的是undefined。
+  - 根本原因：vue渲染机制中：异步数据先显示初始数据，再显示带数据的数据，所以上来加载info时候还是一个空对象，当渲染完成后，才加载异步数据。
+  - 解决方案：在上面一个div中添加v-if判断条件，如果info.supports取不到，则不加载该div即可解决。（注意，不能用v-show，v-show的机制是加载后，根据条件判断是否显示）
+
+#### 6.时间戳格式化
+  - yy
+  - MM
+  - dd
+  - hh/HH  hh为12小时制，HH为24小时制
+  - mm
+  - ss
+
+  - const date = new Date(timestamp)
+  - const format = "yy-MM-dd HH:mm:ss"
+  - newDate = dateFormat(date, format)
+
+#### 7.mixins混入
+  - 将通用的组件属性打包成一个模块，供其它组件使用，减少代码重复率。
+
+#### 8.联动效果

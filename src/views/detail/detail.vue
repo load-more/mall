@@ -1,13 +1,15 @@
 <template>
   <div id="detail">
     <detail-nav></detail-nav>
-    <!-- <scroll> -->
-      <detail-swiper :images="topImages"></detail-swiper>
+    <scroll ref="scroll" :probe-type="3" :pull-up-load="true" :clickType="true">
+      <detail-swiper :images="topImages" @imgLoad="isImgLoad"></detail-swiper>
       <base-info :base-info="baseInfo"></base-info>
-      <shop-info :shop-info="shopInfo"></shop-info>
-      <detail-info :detail-info="detailInfo"></detail-info>
+      <shop-info :shop-info="shopInfo" @imgLoad="isImgLoad"></shop-info>
+      <detail-info :detail-info="detailInfo" @imgLoad="isImgLoad"></detail-info>
       <goods-info :goods-params="goodsParams"></goods-info>
-    <!-- </scroll> -->
+      <rate-info :rate-info="rateInfo" @imgLoad="isImgLoad"></rate-info>
+      <goods-list :goods="recommend" ></goods-list>
+    </scroll>
   </div>
 </template>
 
@@ -19,10 +21,13 @@ import BaseInfo from "./baseinfo/DetailBaseInfo"
 import ShopInfo from "./shopinfo/DetailShopInfo"
 import DetailInfo from "./detailinfo/DetailInfo"
 import GoodsInfo from "./goodsinfo/GoodsInfo"
+import RateInfo from "./rateinfo/DetailRateInfo"
 
-// import Scroll from "components/common/scroll/Scroll"
+import GoodsList from "components/content/GoodsList/GoodsList";
+import Scroll from "components/common/scroll/Scroll"
 
-import {getDetail, GoodsBaseInfo, GoodsShopInfo, GoodsParams} from "network/home.js"
+import {getDetail, GoodsBaseInfo, GoodsShopInfo, GoodsParams, getRecommend} from "network/home.js"
+import {debounce} from "common/utils"
 
 export default {
   name: "detail",
@@ -32,8 +37,10 @@ export default {
     BaseInfo,
     ShopInfo,
     DetailInfo,
-    GoodsInfo
-    // Scroll
+    GoodsInfo,
+    RateInfo,
+    GoodsList,
+    Scroll
   },
   data() {
     return {
@@ -42,7 +49,9 @@ export default {
       baseInfo: {},
       shopInfo: {},
       detailInfo: {},
-      goodsParams: {}
+      goodsParams: {},
+      rateInfo: {},
+      recommend: []
     }
   },
   created() {
@@ -54,8 +63,24 @@ export default {
       this.shopInfo = new GoodsShopInfo(data.shopInfo)
       this.detailInfo = data.detailInfo.detailImage[0]
       this.goodsParams = new GoodsParams(data.itemParams)
-
-      console.log(data);
+      this.rateInfo = data.rate
+      // console.log(data);
+    })
+    getRecommend().then(res => {
+      this.recommend = res.data.list
+      console.log(res);
+    })
+  },
+  methods: {
+    isImgLoad() {
+      this.$refs.scroll.refresh()
+      console.log(1111);
+    }
+  },
+  mounted () {
+    let refresh = debounce(this.$refs.scroll.refresh, 500)
+    this.$bus.$on("detailItemImageLoad", () => {    // 注意放在mounted里，保证能获取到元素
+      refresh("Detail refresh...")
     })
   }
 }

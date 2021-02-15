@@ -1,4 +1,4 @@
-export function debounce (func, delay) {
+export function debounce (func, delay=300) {
   let timer = null
 
   return (...args) => {

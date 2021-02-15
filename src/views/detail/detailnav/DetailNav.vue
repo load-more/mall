@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       list: ["商品", "参数", "评论", "推荐"],
-      currentIndex: 0
+      // currentIndex: 0
     };
   },
   methods: {
@@ -33,6 +33,15 @@ export default {
     },
     itemClick (index) {
       this.currentIndex = index
+      this.$emit("itemClick", index)
+    }
+  },
+  props: {
+    currentIndex: {
+      type: Number,
+      default() {
+        return 0
+      }
     }
   }
 };

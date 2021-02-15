@@ -21,6 +21,7 @@ export default {
     border-radius: 20px;
     background-color: white;
     text-align: center;
+    border: 2px gray solid;
   }
   .backtop img {
     width: 20px;

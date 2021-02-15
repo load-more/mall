@@ -47,6 +47,7 @@ export class GoodsBaseInfo {
     this.service1Icon = shopInfo.services[0].icon
     this.service2Icon = shopInfo.services[1].icon
     this.service3Icon = shopInfo.services[2].icon
+    this.lowNowPrice = itemInfo.lowNowPrice
   }
 }
 

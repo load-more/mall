@@ -202,3 +202,64 @@ methods: {
   - 将通用的组件属性打包成一个模块，供其它组件使用，减少代码重复率。
 
 #### 8.联动效果
+  - 给tab添加响应事件，注意要在图片每次刷新时refresh，获取最新的offsetTop
+  - 由于赋值频繁，可以设置防抖函数提高性能
+
+> 购物车
+  - 使用vuex记录加入购物车的商品
+    - vuex知识点
+  - vuex补充：
+    - 当要获取vuex中的计算属性时，可以使用getters
+    - 在组件中可以使用`import {mapGetters} from "vuex"`的方式导入mapGetters
+    - 在组件的computed中使用...mapGetters()的语法，可以将所有getters全部导入
+    - 这里有两种导入方法：
+      - ...mapGetters([''])   // 属性名必须对应且固定
+      - ...mapGetters({})     // 属性名可以自定义
+  - 将商品选中或者不选中：
+    - 主要问题：当点击按钮时，无法切换选中或不选中的状态
+    - 原因：在初始化商品参数时，没有加入isChecked参数，而是后来通过goodsItem.isChecked=true的方式加入的，这样导致isChecked没有push到state中的cartList中，所以无法实时响应状态
+    - 解决方法：push之前完成对isChecked的初始化
+
+#### 9.相对布局
+  - relative是根据元素的默认位置进行相对布局的，即元素的定位是相对默认位置的
+  - calc(100% - 49px) 注意100%是指父元素的高度，可以给父元素设置100vh(视口高度),`运算符两边必须要有空格`
+  - 元素的样式之间可以覆盖
+
+#### 10.全选按钮的实现
+  - 1.全选按钮的状态
+    - 判断item是否全部选中，用find性能比用filter更高
+    - 注意，要判断初始条件下，item是否为空
+  - 2.全选按钮的点击
+    - 使用forEach，分两种情况
+
+> 创建信息弹窗(toast)
+  - 1.创建一个toast组件，用于显示信息，为了方便调用，我们可以自制一个插件
+  - 2.我们只要通过this.$toast.show(message, duration)的方法就可以便捷的使用弹窗
+  - 3.创建一个toast文件夹，里面创建两个文件：
+    - index.js  -- 用于添加配置信息
+    - toast.vue -- 即组件
+  - 4.在index.js中写入相关信息
+  - 5.在main.js中使用我们自制的插件，注意当我们通过Vue.use(toast)时，会找到并调用toast的install函数
+  - 6.在我们需要的地方调用
+
+
+> 解决移动端300ms的延迟
+  - 使用FastClick插件：
+    - 1.安装fastclick
+    - 2.在main.js中导入插件
+    - 3.在main.js中：FastClick.attach(document.body)
+
+> 使用图片懒加载
+  - 1.安装vue-lazyload
+  - 2.导入插件
+  - 3.使用插件
+  - 4.在img标签中用v-lazy代替src
+
+> css单位转换(px2vw)
+  - 1.安装插件postcss-px-to-viewport
+  - 2.创建postcss.config.js文件，写入配置信息
+
+
+> 项目部署
+
+
